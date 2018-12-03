@@ -9,7 +9,7 @@ rc-slider
 ```
 
 ## Installation
-Create an empth app using create-react-app
+Create an empty app using create-react-app
 ```
 npx create-react-app my-app
 ```
