@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Filter from "./Filter";
 import Movies from "./Movies";
 
 import './App.css';
@@ -19,9 +18,6 @@ class App extends Component {
         results: [],        // movies list from all pages
         genres: undefined,  // genres map for lookup 
         options: [],        // options for genres selection
-        filtered: [],       // selected genres
-        selected: [],       // selected genres for selection display
-        rating: 5,          // Movies rating, default: 5
     };
   }
   
@@ -60,7 +56,7 @@ class App extends Component {
     const response = await fetch( api );
     const body = await response.json();
     if (response.status !== 200) throw Error(body.message);
-    console.log(body.results);
+    //console.log(body.results);
     return body;
   };
 
@@ -79,43 +75,9 @@ class App extends Component {
     body.genres.map(function(e) {
       return map.set(e.id, e.name);
     })
-    
     return map;
   };
   
-  /*
-   * Filter movie list based on user request(genres, rating)
-   */
-  filterResults = (item) => {
-    let selected = this.state.filtered;
-    let rating = this.state.rating;
-    for (let genre of selected) {   
-      if(!item.genre_ids.includes(parseInt(genre.value))){
-        return false;
-      } 
-    }
-    return item.vote_average >= rating;           
-  }
-
-  /*
-   * Onchanage of genre selection
-   */
-  onChangeGenre = (entry) => {
-    let filtered = entry.map(item => 
-      ({'id': 'genre_ids', 'value': String(item.value)}) 
-      )
-    this.setState({ filtered });
-    this.setState({ selected: entry });
-  };
-  
-  /*
-   * Onchanage of rating slider
-   */
-  onChangeRating = (rating) => {
-    console.log(rating);
-    this.setState({ rating:rating.rating });
-  };
-
   /*
    * Renders 
    *    (i)   Genres multi selection box
@@ -127,24 +89,11 @@ class App extends Component {
     
     return (
       
-      <div className="container">
-        <header className="App-header">
-          <br />
-          <Filter selected={this.state.selected} 
-                  options={this.state.options} 
-                  rating={this.state.rating}
-                  onChangeGenre={this.onChangeGenre} 
-                  onChangeRating={this.onChangeRating} 
-                  />
-          <br />
-        </header>
-        
-        <Movies data={this.state.results.filter(this.filterResults)}
+        <Movies results={this.state.results}
                 genres={this.state.genres}
+                options={this.state.options}
                 imagePath={this.state.apiImagePath} 
         />
-        <br />
-      </div>
     );
 
 
